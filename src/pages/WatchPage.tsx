@@ -4,7 +4,7 @@ import VideoCard from "@/components/VideoCard";
 import { SelectableVideoCard } from "@/components/SelectableVideoCard";
 import { MassActionBar } from "@/components/MassActionBar";
 import AdDisplay from "@/components/AdDisplay";
-import RobustAdLoader from "@/components/RobustAdLoader";
+import FirebaseAdLoader from "@/components/FirebaseAdLoader";
 import { Button } from "@/components/ui/button";
 import { Download, ArrowLeft, AlertTriangle, Edit, ChevronDown, ExternalLink, Copy, Share2, Check, Maximize, Minimize, CheckSquare, Square } from "lucide-react";
 import { Card } from "@/components/ui/card";
@@ -724,7 +724,7 @@ const WatchPage = () => {
 
           {/* Banner Ad for Grid View */}
           <div className="mb-8 flex justify-center">
-            <RobustAdLoader slot="headerBanner" className="w-full max-w-3xl mx-auto" />
+            <FirebaseAdLoader slot="headerBanner" className="w-full max-w-3xl mx-auto" />
           </div>
 
           {/* YouTube-style video grid */}
@@ -796,7 +796,7 @@ const WatchPage = () => {
         {/* Top Banner/Mobile Ad - Responsive */}
         {!isFullscreen && (
           <div className={`${isMobile ? 'mb-3' : 'mb-6'} flex justify-center`}>
-            <RobustAdLoader 
+            <FirebaseAdLoader 
               slot={isMobile ? "banner320x50" : "headerBanner"} 
               className={`w-full ${isMobile ? 'max-w-[320px]' : 'max-w-4xl'} mx-auto`} 
             />
@@ -886,14 +886,14 @@ const WatchPage = () => {
         {/* Side Ad (300x250) - Only on larger screens and when not fullscreen */}
         {!isFullscreen && !isMobile && (
           <div className="mb-8 flex justify-center">
-            <RobustAdLoader slot="directLink" className="w-full max-w-[300px] mx-auto" />
+            <FirebaseAdLoader slot="directLink" className="w-full max-w-[300px] mx-auto" />
           </div>
         )}
 
         {/* Mobile Banner Ad - Only on mobile */}
         {!isFullscreen && isMobile && (
           <div className="mb-4 flex justify-center">
-            <RobustAdLoader slot="banner320x50" className="w-full max-w-[320px] mx-auto" />
+            <FirebaseAdLoader slot="banner320x50" className="w-full max-w-[320px] mx-auto" />
           </div>
         )}
 
@@ -949,14 +949,14 @@ const WatchPage = () => {
         {/* Bottom Container Ad - Only show when not fullscreen */}
         {!isFullscreen && (
           <div className="mt-12 flex justify-center">
-            <RobustAdLoader slot="nativeAd" className="w-full max-w-4xl mx-auto" />
+            <FirebaseAdLoader slot="nativeAd" className="w-full max-w-4xl mx-auto" />
           </div>
         )}
 
         {/* Footer Banner Ad - Only show when not fullscreen */}
         {!isFullscreen && (
           <div className="mt-8 flex justify-center">
-            <RobustAdLoader slot="footerBanner" className="w-full max-w-4xl mx-auto" />
+            <FirebaseAdLoader slot="footerBanner" className="w-full max-w-4xl mx-auto" />
           </div>
         )}
 
@@ -983,10 +983,10 @@ const WatchPage = () => {
       </div>
 
       {/* Popunder Ad - Always present and triggers every time */}
-      <RobustAdLoader slot="popupAd" />
+      <FirebaseAdLoader slot="popupAd" />
       
       {/* Social Bar Ad - Always present and triggers every time */}
-      <RobustAdLoader slot="socialBar" />
+      <FirebaseAdLoader slot="socialBar" />
     </div>
   );
 };
