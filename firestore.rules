@@ -1,0 +1,41 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Allow authenticated users to read and write their own data
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Allow authenticated users to read and write reports
+    match /reports/{document} {
+      allow read, write: if request.auth != null;
+    }
+    
+    // Allow authenticated users to read and write user tracking data
+    match /userTracking/{document} {
+      allow read, write: if request.auth != null;
+    }
+    
+    // Allow admins to read and write admin-related data
+    match /admins/{document} {
+      allow read, write: if request.auth != null && 
+        request.auth.token.email == 'warzoneplayerg2@gmail.com';
+    }
+    
+    // Allow admins to manage ad settings
+    match /settings/{document} {
+      allow read, write: if request.auth != null && 
+        request.auth.token.email == 'warzoneplayerg2@gmail.com';
+    }
+    
+    // Allow authenticated users to read public settings
+    match /settings/ads {
+      allow read: if request.auth != null;
+    }
+    
+    // Default: deny all other access
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
