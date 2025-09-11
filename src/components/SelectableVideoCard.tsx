@@ -65,34 +65,36 @@ export function SelectableVideoCard({
           {video.title}
         </CardTitle>
         {!selectionMode && (
-          <div className="flex gap-2">
-            <Button
-              onClick={onCopyUrl}
-              size="sm"
-              className="flex-1 text-xs"
-            >
-              <Copy className="w-3 h-3 mr-1" />
-              Copy URL
-            </Button>
+          <div className="flex flex-col gap-2">
+            <div className="flex gap-2">
+              <Button
+                onClick={onCopyUrl}
+                size="sm"
+                className="flex-1 text-xs"
+              >
+                <Copy className="w-3 h-3 mr-1" />
+                Copy URL
+              </Button>
+              <Button
+                onClick={onDelete}
+                size="sm"
+                variant="destructive"
+                className="text-xs"
+              >
+                <Trash2 className="w-3 h-3" />
+              </Button>
+            </div>
             {isCollection && onAddVideos && (
               <Button
                 onClick={onAddVideos}
                 size="sm"
                 variant="outline"
-                className="text-xs"
-                title="Add more videos to this collection"
+                className="w-full text-xs border-blue-400 text-blue-400 hover:bg-blue-400/10"
               >
-                <Plus className="w-3 h-3" />
+                <Plus className="w-3 h-3 mr-1" />
+                Add Videos
               </Button>
             )}
-            <Button
-              onClick={onDelete}
-              size="sm"
-              variant="destructive"
-              className="text-xs"
-            >
-              <Trash2 className="w-3 h-3" />
-            </Button>
           </div>
         )}
       </CardContent>
