@@ -27,6 +27,10 @@ const Dashboard = () => {
   const [posterUrl, setPosterUrl] = useState("");
   const [loading, setLoading] = useState(true);
   
+  // State for adding videos to existing collection
+  const [showAddVideosModal, setShowAddVideosModal] = useState(false);
+  const [selectedCollection, setSelectedCollection] = useState<Collection | null>(null);
+  
   // New state for mass operations
   const [selectionMode, setSelectionMode] = useState(false);
   const [selectedCollections, setSelectedCollections] = useState<Set<string>>(new Set());
@@ -330,6 +334,75 @@ const Dashboard = () => {
     handleClearSelection();
   };
 
+  const handleAddVideosToCollection = (collection: Collection) => {
+    setSelectedCollection(collection);
+    setShowAddVideosModal(true);
+  };
+
+  const handleAddVideosProcessed = async (data: string, suggestedTitle?: string, suggestedPoster?: string) => {
+    if (!user || !selectedCollection) return;
+
+    console.log("Adding videos to existing collection:", selectedCollection.id);
+    
+    const lines = data.trim().split('\n').map(line => line.trim()).filter(line => line.length > 0);
+    const newVideos: Video[] = [];
+    
+    for (let i = 0; i < lines.length; i += 5) {
+      if (i + 4 < lines.length) {
+        const video: Video = {
+          id: lines[i],
+          title: lines[i + 1],
+          poster: lines[i + 2],
+          download: lines[i + 3],
+          watch: lines[i + 4]
+        };
+        newVideos.push(video);
+      }
+    }
+
+    if (newVideos.length === 0) {
+      toast({
+        title: "Invalid format",
+        description: "No valid video data found.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      // Ensure existing videos is an array
+      const existingVideos = Array.isArray(selectedCollection.videos) ? selectedCollection.videos : [];
+      
+      // Merge new videos with existing videos
+      const updatedVideos = [...existingVideos, ...newVideos];
+      
+      const updatedCollectionData = {
+        owner: selectedCollection.owner,
+        title: selectedCollection.title,
+        poster: selectedCollection.poster,
+        videos: updatedVideos
+      };
+      
+      await saveCollection(updatedCollectionData, selectedCollection.id);
+      
+      toast({
+        title: "Videos added successfully!",
+        description: `${newVideos.length} video(s) added to "${selectedCollection.title}".`,
+      });
+      
+      setShowAddVideosModal(false);
+      setSelectedCollection(null);
+      loadData();
+    } catch (error) {
+      console.error("Error adding videos to collection:", error);
+      toast({
+        title: "Error",
+        description: "Failed to add videos to collection. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
   if (!user) {
     navigate('/');
     return null;
@@ -414,6 +487,8 @@ const Dashboard = () => {
                     onDelete={() => handleDeleteCollection(collection.id!)}
                     onPlay={() => navigate(`/watch/${collection.id}`)}
                     selectionMode={selectionMode}
+                    onAddVideos={() => handleAddVideosToCollection(collection)}
+                    isCollection={true}
                   />
                 ))}
               </div>
@@ -462,6 +537,7 @@ const Dashboard = () => {
                     onDelete={() => handleDeleteSingleVideo(video.id!)}
                     onPlay={() => navigate(`/watch/${video.id}`)}
                     selectionMode={selectionMode}
+                    isCollection={false}
                   />
                 ))}
               </div>
@@ -580,6 +656,25 @@ const Dashboard = () => {
                 <UploadArea onDataProcessed={handleDataProcessed} />
               </div>
             )}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Add Videos to Collection Modal */}
+      <Dialog open={showAddVideosModal} onOpenChange={setShowAddVideosModal}>
+        <DialogContent className="mx-2 sm:mx-4 sm:max-w-3xl max-h-[90vh] w-[calc(100vw-1rem)] sm:w-full flex flex-col">
+          <DialogHeader className="flex-shrink-0 pb-4">
+            <DialogTitle className="text-lg md:text-xl">
+              Add Videos to "{selectedCollection?.title}"
+            </DialogTitle>
+          </DialogHeader>
+          <div className="flex-1 overflow-y-auto">
+            <div className="space-y-4 pb-4">
+              <div className="text-sm text-muted-foreground">
+                Add more videos to this collection. The videos will be appended to the existing collection.
+              </div>
+              <UploadArea onDataProcessed={handleAddVideosProcessed} />
+            </div>
           </div>
         </DialogContent>
       </Dialog>

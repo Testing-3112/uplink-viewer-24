@@ -3,7 +3,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Play, Copy, Trash2 } from 'lucide-react';
+import { Play, Copy, Trash2, Plus } from 'lucide-react';
 import { Video, Collection } from '@/lib/firebase';
 
 interface SelectableVideoCardProps {
@@ -14,6 +14,8 @@ interface SelectableVideoCardProps {
   onDelete: () => void;
   onPlay: () => void;
   selectionMode: boolean;
+  onAddVideos?: () => void; // New prop for adding videos to collections
+  isCollection?: boolean; // New prop to distinguish collections from single videos
 }
 
 export function SelectableVideoCard({
@@ -23,7 +25,9 @@ export function SelectableVideoCard({
   onCopyUrl,
   onDelete,
   onPlay,
-  selectionMode
+  selectionMode,
+  onAddVideos,
+  isCollection = false
 }: SelectableVideoCardProps) {
   return (
     <Card className={`group hover:shadow-lg transition-all duration-300 ${isSelected ? 'ring-2 ring-blue-500' : ''}`}>
@@ -70,6 +74,17 @@ export function SelectableVideoCard({
               <Copy className="w-3 h-3 mr-1" />
               Copy URL
             </Button>
+            {isCollection && onAddVideos && (
+              <Button
+                onClick={onAddVideos}
+                size="sm"
+                variant="outline"
+                className="text-xs"
+                title="Add more videos to this collection"
+              >
+                <Plus className="w-3 h-3" />
+              </Button>
+            )}
             <Button
               onClick={onDelete}
               size="sm"
